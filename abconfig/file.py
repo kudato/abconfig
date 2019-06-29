@@ -9,9 +9,9 @@ from typing import IO, Type
 class Reader(Dict):
     def __init__(self, x: Type[Dict]):
         self.x = x
-        from_env = environ.get('CONFIG_FILE', None)
+        from_env = environ.get('CONFIG_FILE', False)
         file_path = self.x.get('load_file', from_env)
-        if file_path != None:
+        if file_path != False:
             super().__init__(x + self._read(file_path))
         else:
             super().__init__(x)
