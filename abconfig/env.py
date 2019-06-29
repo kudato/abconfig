@@ -4,7 +4,7 @@ from abconfig.common import Dict
 
 class Env(Dict):
     def __init__(self, x):
-        enabled = x.pop('load_env', False)
+        enabled = x.pop('load_env', True)
         if enabled != False:
             super().__init__(x + self._read(x))
         else:

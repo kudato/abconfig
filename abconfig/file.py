@@ -1,6 +1,7 @@
 import yaml
 import json
 
+from os import environ
 from abconfig.common import Dict
 from typing import IO, Type
 
@@ -8,7 +9,8 @@ from typing import IO, Type
 class Reader(Dict):
     def __init__(self, x: Type[Dict]):
         self.x = x
-        file_path = self.x.get('load_file', None)
+        from_env = environ.get('CONFIG_FILE', None)
+        file_path = self.x.get('load_file', from_env)
         if file_path != None:
             super().__init__(x + self._read(file_path))
         else:
