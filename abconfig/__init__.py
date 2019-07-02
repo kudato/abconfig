@@ -2,7 +2,7 @@ __version__ = '1.0.0'
 
 from abconfig.common import Dict
 from abconfig.utils import Attrs, Finalize
-from abconfig.file import Json, Yaml
+from abconfig.file import Json, Yaml, Toml
 from abconfig.env import Env
 
 
@@ -15,6 +15,7 @@ class ABConfig(Dict):
             Attrs(self) \
             .bind(Json) \
             .bind(Yaml) \
+            .bind(Toml) \
             .bind(Env)  \
             .bind(Finalize)
         )

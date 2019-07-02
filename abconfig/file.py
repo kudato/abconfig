@@ -1,5 +1,14 @@
-import yaml
 import json
+
+try:
+    import yaml
+except ImportError:
+    pass
+
+try:
+    import toml
+except ImportError:
+    pass
 
 from os import environ
 from abconfig.common import Dict
@@ -39,3 +48,8 @@ class Yaml(Reader):
 class Json(Reader):
     def _reader(self, fd: IO[str]):
         return json.load(fd)
+
+
+class Toml(Reader):
+    def _reader(self, fd: IO[str]):
+        return toml.load(fd)
