@@ -1,5 +1,7 @@
 # ABConfig
 
+[![Build Status](https://travis-ci.org/kudato/abconfig.svg?branch=master)](https://travis-ci.org/kudato/abconfig) [![Coverage Status](https://coveralls.io/repos/github/kudato/abconfig/badge.svg?branch=master)](https://coveralls.io/github/kudato/abconfig?branch=master)
+
 The configuration should be simple, this project aims to give you all the power while maintaining ease of use.
 
 
