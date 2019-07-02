@@ -40,12 +40,15 @@ args = dict(
         'Programming Language :: Python :: 3.7',
         'Operating System :: POSIX',
         'Operating System :: MacOS :: MacOS X',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities',
     ],
     packages=['abconfig'],
-    install_requires=['pyyaml>=5.1'],
+    extras_require={
+        'yaml': ['pyyaml>=5.1'],
+        'toml': ['toml>=0.10.0'],
+    },
     python_requires='>=3.6.0',
 
 )
