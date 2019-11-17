@@ -5,15 +5,15 @@ from abconfig.common import Item, Dict
 
 class TestItem(unittest.TestCase):
     def test_mempty(self):
-        for sub_set in Item.defined_sets:
+        for sub_set in Item.__types__:
             for x in sub_set:
                 self.assertEqual(
-                    Item(Item.mempty) + x,
-                    Item(x) + Item.mempty
+                    Item(Item.__mempty__) + x,
+                    Item(x) + Item.__mempty__
                 )
 
     def test_associativity(self):
-        for sub_set in Item.defined_sets:
+        for sub_set in Item.__types__:
             for t in sub_set:
                 self.assertEqual(
                     Item(Item(1) + 2) + 3,
@@ -114,8 +114,8 @@ class TestItem(unittest.TestCase):
 class TestDict(unittest.TestCase):
     def test_mempty(self):
         self.assertEqual(
-            Dict(Dict.mempty) + dict(data=2),
-            Dict(data=2) + Dict.mempty, dict(data=2)
+            Dict(Dict.__mempty__) + dict(data=2),
+            Dict(data=2) + Dict.__mempty__, dict(data=2)
         )
 
     def test_associativity(self):
@@ -126,12 +126,12 @@ class TestDict(unittest.TestCase):
 
     def test_fmap(self):
         self.assertEqual(
-            Dict(data=1).fmap(lambda x: (x[0], x[1] + 1)),
+            Dict(data=1)._fmap(lambda k,v: (k, v + 1)),
             Dict(data=2)
         )
 
     def test_bind(self):
         self.assertEqual(
-            Dict(data=1).bind(lambda x: dict(new_data=x['data'])),
+            Dict(data=1)._bind(lambda x: dict(new_data=x['data'])),
             Dict(new_data=1)
         )
