@@ -18,8 +18,7 @@ from typing import IO, Type
 class Reader(Dict):
     def __init__(self, x: Type[Dict]):
         self.x = x
-        from_env = environ.get('CONFIG_FILE', False)
-        file_path = self.x.get('load_file', from_env)
+        file_path = self.x.get('__file__', False)
         if file_path != False:
             super().__init__(x + self._read(file_path))
         else:
@@ -31,10 +30,10 @@ class Reader(Dict):
                 read = self._reader(fd)
                 if not isinstance(read, (dict, Dict)):
                     raise IOError
-                self.x.pop('load_file', None)
+                self.x.pop('__file__', False)
                 return read
         except Exception:
-            return self.mempty
+            return self.__mempty__
 
     def _reader(self, fd: IO[str]):
         raise NotImplementedError
@@ -53,3 +52,10 @@ class Json(Reader):
 class Toml(Reader):
     def _reader(self, fd: IO[str]):
         return toml.load(fd)
+
+
+class File(Dict):
+    __formats__ = (Json, Yaml, Toml)
+
+    def __init__(self, obj: Dict):
+        super().__init__(obj._do(*self.__formats__))
