@@ -2,6 +2,13 @@ ABConfig Changelog
 ==================
 
 
+1.0.3
+-----
+
+    * Make do method as public;
+    * Some optimizations.
+
+
 1.0.2
 -----
 
