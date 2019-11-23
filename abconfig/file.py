@@ -10,47 +10,46 @@ try:
 except ImportError:
     pass
 
-from os import environ
 from abconfig.common import Dict
-from typing import IO, Type
 
 
 class Reader(Dict):
-    def __init__(self, x: Type[Dict]):
-        self.x = x
-        file_path = self.x.get('__file__', False)
-        if file_path != False:
-            super().__init__(x + self._read(file_path))
+    def __init__(self, obj: Dict):
+        self._obj = obj
+        path = obj.get('__file__', False)
+        if path != False:
+            super().__init__(obj + self._read(path))
         else:
-            super().__init__(x)
+            super().__init__(obj)
 
-    def _read(self, file_path: str):
+    def _read(self, path: str) -> dict:
         try:
-            with open(file_path, 'r') as fd:
-                read = self._reader(fd)
-                if not isinstance(read, (dict, Dict)):
+            with open(path, 'r') as fd:
+                result = self._reader(fd)
+                if not isinstance(result, (dict, Dict)):
                     raise IOError
-                self.x.pop('__file__', False)
-                return read
+                self._obj.pop('__file__', False)
+                return result
         except Exception:
             return self.__mempty__
 
-    def _reader(self, fd: IO[str]):
+    def _driver(self, fd) -> dict:
         raise NotImplementedError
 
+# Drivers:
 
 class Yaml(Reader):
-    def _reader(self, fd: IO[str]):
+    def _driver(self, fd) -> dict:
         return yaml.load(fd, Loader=yaml.FullLoader)
 
 
 class Json(Reader):
-    def _reader(self, fd: IO[str]):
+    def _driver(self, fd) -> dict:
         return json.load(fd)
 
 
 class Toml(Reader):
-    def _reader(self, fd: IO[str]):
+    def _driver(self, fd) -> dict:
         return toml.load(fd)
 
 
@@ -58,4 +57,4 @@ class File(Dict):
     __formats__ = (Json, Yaml, Toml)
 
     def __init__(self, obj: Dict):
-        super().__init__(obj._do(*self.__formats__))
+        super().__init__(obj.do(*self.__formats__))

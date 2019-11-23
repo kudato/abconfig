@@ -51,7 +51,7 @@ class Dict(UserDict):
         """ Applies function to object. """
         return f(self)
 
-    def _do(self, *args: [dict]) -> dict:
+    def do(self, *args: [dict]) -> dict:
         acc = args[0](self)
         for obj in args[1:]:
             acc = acc._bind(obj)

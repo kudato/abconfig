@@ -41,4 +41,4 @@ class Env(Dict):
     __envnd__ = (Environment, DefaultType)
 
     def __init__(self, obj: Dict):
-        super().__init__(obj._do(*self.__envnd__))
+        super().__init__(obj.do(*self.__envnd__))
