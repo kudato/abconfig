@@ -1,4 +1,4 @@
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 from abconfig.common import Dict
 from abconfig.file import File
@@ -12,8 +12,8 @@ class GetAttrs(Dict):
 
     def __init__(self, obj: Dict):
         super().__init__({
-            str(i): getattr(obj, i) for i in type(obj).__dict__.keys()
-            if (i[:1] != '_' or i in self.__settings__)
+            str(k): v for k,v in type(obj).__dict__.items()
+            if k[:1] != '_' or k in self.__settings__
         })
 
 
@@ -30,5 +30,5 @@ class ABConfig(Dict):
         if str(type(self).__name__) == 'ABConfig':
             raise NotImplementedError
 
-        super().__init__(self._do(*self.__sources__))
+        super().__init__(self.do(*self.__sources__))
         self.__dict__.update(self)
