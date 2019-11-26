@@ -10,16 +10,16 @@ class TestEnv(unittest.TestCase):
     def test_variable(self):
         with unittest.mock.patch.dict(os.environ, {'FOO': 'bar'}):
             self.assertEqual(
-                Dict(foo=str, __env__=True)._bind(Env), {'foo': 'bar'})
+                Dict(foo=str, __env__=True)._bind(Env), {'foo': 'bar', '__env__': True})
 
     def test_with_prefix(self):
         with unittest.mock.patch.dict(os.environ, {'FOO_BAR': 'baz'}):
             self.assertEqual(
                 Dict(foo=dict(bar=str), __env__=True)._bind(Env),
-                {'foo':{'bar': 'baz'}}
+                {'foo':{'bar': 'baz'}, '__env__': True}
             )
 
     def test_disabled(self):
         self.assertEqual(
-            Dict(foo=1, __env__=False)._bind(Env), {'foo': 1}
+            Dict(foo=1, __env__=False)._bind(Env), {'foo': 1, '__env__': False}
         )

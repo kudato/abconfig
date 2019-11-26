@@ -17,6 +17,7 @@ source = dict(
 )
 
 data = dict(
+    __file__='test_file',
     test1=1,
     test2=dict(
         test3='a'
@@ -25,12 +26,6 @@ data = dict(
 
 
 class TestFile(unittest.TestCase):
-    @patch('builtins.open', new_callable=mock_open, read_data=json.dumps(data))
-    def test_file_path_from_env(self, m):
-        with unittest.mock.patch.dict(os.environ, {'CONFIG_FILE': 'test_file'}):
-            self.assertEqual(Dict(source)._bind(Json), data)
-            m.assert_called_with('test_file', 'r')
-
     @patch('builtins.open', new_callable=mock_open, read_data=json.dumps(data))
     def test_json(self, m):
         self.assertEqual(Dict(source)._bind(Json), data)
