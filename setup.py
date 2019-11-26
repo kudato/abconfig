@@ -12,15 +12,12 @@ here = pathlib.Path(__file__).parent
 txt = (here / 'abconfig' / '__init__.py').read_text('utf-8')
 
 try:
-    version = re.findall(r"^__version__ = '([^']+)'\r?$",
-                         txt, re.M)[0]
+    version = re.findall(r"^__version__ = '([^']+)'\r?$", txt, re.M)[0]
 except IndexError:
     raise RuntimeError('Unable to determine version.')
 
-
 with open('README.md', 'r') as f:
     long_description = f.read()
-
 
 args = dict(
     name='abconfig',
@@ -48,6 +45,7 @@ args = dict(
     extras_require={
         'yaml': ['pyyaml>=5.1'],
         'toml': ['toml>=0.10.0'],
+        'hvac': ['hvac>=0.9.6'],
     },
     python_requires='>=3.6.0',
 
