@@ -132,6 +132,6 @@ class TestDict(unittest.TestCase):
 
     def test_bind(self):
         self.assertEqual(
-            Dict(data=1)._bind(lambda x: dict(new_data=x['data'])),
+            Dict(data=1).bind(lambda x: dict(new_data=x['data'])),
             Dict(new_data=1)
         )
