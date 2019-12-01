@@ -45,7 +45,7 @@ args = dict(
     extras_require={
         'yaml': ['pyyaml>=5.1'],
         'toml': ['toml>=0.10.0'],
-        'hvac': ['hvac>=0.9.6'],
+        'vault': ['hvac>=0.9.6'],
     },
     python_requires='>=3.6.0',
 
