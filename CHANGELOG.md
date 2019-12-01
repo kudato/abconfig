@@ -1,6 +1,13 @@
 ABConfig Changelog
 ==================
 
+
+1.0.6
+-----
+
+    * Added Vault extras support;
+
+
 1.0.5
 -----
 
