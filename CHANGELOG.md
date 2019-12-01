@@ -1,6 +1,13 @@
 ABConfig Changelog
 ==================
 
+1.0.5
+-----
+
+    * Added ini files support;
+    * Some optimizations.
+
+
 1.0.4
 -----
 
