@@ -1,4 +1,4 @@
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 
 from abconfig.common import Dict
 from abconfig.file import File
@@ -6,8 +6,6 @@ from abconfig.env import Env
 
 
 class GetAttrs(Dict):
-    """ Class attribute reader. """
-
     __settings__ = (
         '__hidesettings__',
         '__prefix__',
@@ -23,6 +21,15 @@ class GetAttrs(Dict):
         })
 
 
+class HideSettings(Dict):
+    def __init__(self, obj:Dict):
+        if obj.get('__hidesettings__'):
+            for k,_ in dict(obj).items():
+                if k in GetAttrs.__settings__:
+                    obj.pop(k)
+        super().__init__(obj)
+
+
 class ABConfig(Dict):
     __hidesettings__ = True
     __prefix__       = None
@@ -36,8 +43,10 @@ class ABConfig(Dict):
         if str(type(self).__name__) == 'ABConfig':
             raise NotImplementedError
 
-        super().__init__(GetAttrs(obj if obj else self).do(*self.__sources__))
+        super().__init__(
+            GetAttrs(obj if obj else self)
+                .do(*self.__sources__)
+                .bind(HideSettings)
+        )
+
         self.__dict__.update(self)
-        if self.get('__hidesettings__', True) is True:
-            for k,_ in dict(self).items():
-                if k in GetAttrs.__settings__: self.pop(k)
