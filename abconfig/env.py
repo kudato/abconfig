@@ -10,7 +10,7 @@ from abconfig.common import Dict
 
 class Environment(Dict):
     def __init__(self, obj: Dict):
-        self._list_separator = obj.get('_env_list_separator__', ',')
+        self.__list_separator__ = ','
         super().__init__(obj + self.read(obj, obj.get('__prefix__', None)))
 
     def read(self, obj: Dict, prefix: str) -> Dict:
@@ -19,12 +19,14 @@ class Environment(Dict):
     def env(self, prefix: str, k: str, v: any) -> tuple:
         if self.is_dict(v):
             return (k, self.read(v, self.concat(prefix,k)))
+
+        var = environ.get(self.concat(prefix, k).upper(), None)
+        if not var: return (k,v)
+        if self.is_list(v):
+            return (k, self.is_type(v)(var.split(self.__list_separator__)))
         else:
-            r = environ.get(self.concat(prefix, k).upper(), None)
-            if r:
-                return (k, r.split(self._list_separator))
-            else:
-                return (k,v)
+            return (k, self.is_type(v)(var))
+
 
     @staticmethod
     def enabled(obj: Dict):
@@ -32,8 +34,8 @@ class Environment(Dict):
 
     @staticmethod
     def concat(*args: [str], **kwargs):
-        return kwargs.get('space', '_') \
-            .join(filter(lambda x: True if x else False, args))
+        s = kwargs.get('space', '_')
+        return s.join(filter(lambda x: True if x else False, args))
 
 
 class Vault(Environment):
@@ -92,7 +94,7 @@ class Close(Dict):
     @staticmethod
     def set_default_type(k, v):
         if Dict.is_dict(v):
-            return (k, Close(Dict(v)))
+            return (k, Close(v))
         elif Dict.is_list(v):
             return (k, Dict.is_type(v)([None if isinstance(i, type) else i for i in v]))
         else:

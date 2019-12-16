@@ -25,11 +25,11 @@ class Settings:
     __vault__ = False
 
 
-class HideSettings(Dict):
-    def __init__(self, obj:Dict):
-        if obj.get('__hidesettings__'):
+class HideSettings(Dict, Settings):
+    def __init__(self, obj: Dict):
+        if obj.get('__hidesettings__', True) is True:
             for k,_ in dict(obj).items():
-                if k in Settings.__list__:
+                if k in self.__list__:
                     obj.pop(k)
         super().__init__(obj)
 
@@ -51,8 +51,9 @@ class ABConfig(UserDict, Settings):
 
         super().__init__(
             GetAttrs(obj if obj else self)
-                .do(*self.__sources__)
-                .bind(HideSettings)
-                .items()
+            .do(*self.__sources__)
+            .bind(HideSettings)
+            .items()
         )
+
         self.__dict__.update(self)

@@ -4,7 +4,7 @@ from collections import UserDict, OrderedDict
 class Type:
     __types__ = (
         (int, float, str, bool),
-        (list, tuple, set, frozenset),
+        (list, tuple, set, frozenset)
     )
 
     @staticmethod
@@ -13,7 +13,7 @@ class Type:
 
     @staticmethod
     def is_list(item: any) -> bool:
-        if isinstance(item, type) or isinstance(item, Type.__types__[1]):
+        if isinstance(item, Type.__types__[1]):
             return True
         else:
             return False
@@ -40,7 +40,7 @@ class Item(Type):
                 [
                     self._type_by_index(index)(i)
                     if not isinstance(i, type) else i
-                    for index,i in enumerate(operand)
+                    for index,i in enumerate(list(operand))
                 ]
             )
         elif not self.is_type(operand) in self._set:
