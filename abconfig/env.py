@@ -10,23 +10,30 @@ from abconfig.common import Dict
 
 class Environment(Dict):
     def __init__(self, obj: Dict):
-        super().__init__(obj + self._read(obj, obj.get('__prefix__', None)))
+        self._list_separator = obj.get('_env_list_separator__', ',')
+        super().__init__(obj + self.read(obj, obj.get('__prefix__', None)))
 
-    def _read(self, obj: Dict, prefix: str) -> Dict:
-        return Dict([self._env(prefix,k,v) for k,v in obj.items()])
+    def read(self, obj: Dict, prefix: str) -> Dict:
+        return Dict([self.env(prefix,k,v) for k,v in obj.items()])
 
-    def _env(self, prefix: str, k: str, v: any) -> tuple:
+    def env(self, prefix: str, k: str, v: any) -> tuple:
         if self.is_dict(v):
-            return (k, self._read(v, self._prefix(prefix,k)))
+            return (k, self.read(v, self.concat(prefix,k)))
         else:
-            return (k, environ.get(self._prefix(prefix, k).upper(), None))
-
-    def _prefix(self, *args: [str]):
-        return '_'.join(filter(lambda x: True if x else False, args))
+            r = environ.get(self.concat(prefix, k).upper(), None)
+            if r:
+                return (k, r.split(self._list_separator))
+            else:
+                return (k,v)
 
     @staticmethod
-    def _enabled(obj: Dict):
+    def enabled(obj: Dict):
         return obj.get('__env__', True)
+
+    @staticmethod
+    def concat(*args: [str], **kwargs):
+        return kwargs.get('space', '_') \
+            .join(filter(lambda x: True if x else False, args))
 
 
 class Vault(Environment):
@@ -42,18 +49,18 @@ class Vault(Environment):
         self._config = self.__config + obj.get('__vault__')
         self._cache = self._request
         if self._config['type'] == 'kv':
-            super().__init__(obj + self._read(obj, obj.get('__prefix__')))
+            super().__init__(obj + self.read(obj, obj.get('__prefix__')))
         elif self._config['type'] == 'json':
             super().__init__(obj + self._cache)
         else:
             raise ValueError(f'only supported "kv" or "json"')
 
-    def _env(self, prefix: str, k: str, v: any) -> tuple:
+    def env(self, prefix: str, k: str, v: any) -> tuple:
         key = k if k != '__vault__' else 'vault'
         if self.is_dict(v):
-            return (key, self._read(v, self._prefix(prefix,key)))
+            return (key, self.read(v, self.concat(prefix,key)))
         else:
-            return (key, self._cache.get(self._prefix(prefix, key).upper(), None))
+            return (key, self._cache.get(self.concat(prefix, key).upper(), None))
 
     @property
     def _request(self) -> dict:
@@ -63,37 +70,39 @@ class Vault(Environment):
         ).secrets.kv
 
         if self._config['kv_version'] == 2:
-            return client.v2.read_secret_version(
+            return client.v2read_secret_version(
                 path=self._config['path']
             )['data']['data']
         elif self._config['kv_version'] == 1:
-            return client.v1.read_secret(
+            return client.v1read_secret(
                 path=self._config['path']
             )['data']
         else:
             return dict()
 
     @staticmethod
-    def _enabled(obj: Dict):
+    def enabled(obj: Dict):
         return Dict.is_dict(obj.get('__vault__'))
 
 
-class Types(Dict):
+class Close(Dict):
     def __init__(self, obj: Dict):
-        super().__init__(
-            obj._fmap(
-                lambda k,v:
-                    (k, Types(Dict(v)))
-                    if self.is_dict(v) else
-                    (k, None if isinstance(v, type) else v)
-            )
-        )
+        super().__init__(obj.fmap(self.set_default_type))
+
+    @staticmethod
+    def set_default_type(k, v):
+        if Dict.is_dict(v):
+            return (k, Close(Dict(v)))
+        elif Dict.is_list(v):
+            return (k, Dict.is_type(v)([None if isinstance(i, type) else i for i in v]))
+        else:
+            return (k, None if isinstance(v, type) else v)
 
 
 class Switch(type):
     def __call__(cls, obj: Dict) -> Dict:
-        do = [s for s in cls.__sources__ if s._enabled(obj)]
-        return (obj.do(*do) if do else obj).bind(Types)
+        do = [s for s in cls.__sources__ if s.enabled(obj)]
+        return (obj.do(*do) if do else obj).bind(Close)
 
 
 class Env(metaclass=Switch):

@@ -1,43 +1,49 @@
-__version__ = '1.0.6'
+__version__ = '1.0.7'
+
+from collections import UserDict
 
 from abconfig.common import Dict
 from abconfig.file import File
 from abconfig.env import Env
 
 
-class GetAttrs(Dict):
-    __settings__ = (
+class Settings:
+    __list__ = (
         '__hidesettings__',
-        '__prefix__',
-        '__env__',
+        '__file_required__',
         '__file__',
-        '__vault__'
+        '__env__',
+        '__prefix__',
+        '__vault__',
     )
 
-    def __init__(self, obj: Dict):
-        super().__init__({
-            str(k): v for k,v in type(obj).__dict__.items()
-            if k[:1] != '_' or k in self.__settings__
-        })
+    __hidesettings__ = True
+    __file_required__ = False
+    __file__ = False
+    __env__ = True
+    __prefix__ = None
+    __vault__ = False
 
 
 class HideSettings(Dict):
     def __init__(self, obj:Dict):
         if obj.get('__hidesettings__'):
             for k,_ in dict(obj).items():
-                if k in GetAttrs.__settings__:
+                if k in Settings.__list__:
                     obj.pop(k)
         super().__init__(obj)
 
 
-class ABConfig(Dict):
-    __hidesettings__ = True
-    __prefix__       = None
-    __env__          = True
-    __file__         = False
-    __vault__        = False
+class GetAttrs(Dict):
+    def __init__(self, obj: Dict):
+        super().__init__({
+            str(k): v for k,v in type(obj).__dict__.items()
+            if k[:1] != '_' or k in Settings.__list__
+        })
 
-    __sources__      = (File, Env)
+
+class ABConfig(UserDict, Settings):
+    __sources__ = (File, Env)
 
     def __init__(self, obj=None):
         if str(type(self).__name__) == 'ABConfig':
@@ -47,6 +53,6 @@ class ABConfig(Dict):
             GetAttrs(obj if obj else self)
                 .do(*self.__sources__)
                 .bind(HideSettings)
+                .items()
         )
-
         self.__dict__.update(self)
