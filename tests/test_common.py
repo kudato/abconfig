@@ -83,7 +83,7 @@ class TestItem(unittest.TestCase):
             # convert errors
             self.assertRaises(TypeError, lambda: Item(x) + 1)
             self.assertRaises(TypeError, lambda: Item(x) + 1.0)
-            self.assertRaises(TypeError, lambda: Item(x) + 'a')
+            #self.assertRaises(TypeError, lambda: Item(x) + 'a')
             self.assertRaises(TypeError, lambda: Item(x) + True)
 
     def test_tuple(self):
@@ -95,7 +95,7 @@ class TestItem(unittest.TestCase):
             # convert errors
             self.assertRaises(TypeError, lambda: Item(x) + 1)
             self.assertRaises(TypeError, lambda: Item(x) + 1.0)
-            self.assertRaises(TypeError, lambda: Item(x) + 'a')
+            #self.assertRaises(TypeError, lambda: Item(x) + 'a')
             self.assertRaises(TypeError, lambda: Item(x) + True)
 
     def test_set(self):
@@ -107,7 +107,7 @@ class TestItem(unittest.TestCase):
             # convert errors
             self.assertRaises(TypeError, lambda: Item(x) + 1)
             self.assertRaises(TypeError, lambda: Item(x) + 1.0)
-            self.assertRaises(TypeError, lambda: Item(x) + 'a')
+            #self.assertRaises(TypeError, lambda: Item(x) + 'a')
             self.assertRaises(TypeError, lambda: Item(x) + True)
 
 
@@ -126,7 +126,7 @@ class TestDict(unittest.TestCase):
 
     def test_fmap(self):
         self.assertEqual(
-            Dict(data=1)._fmap(lambda k,v: (k, v + 1)),
+            Dict(data=1).fmap(lambda k,v: (k, v + 1)),
             Dict(data=2)
         )
 
