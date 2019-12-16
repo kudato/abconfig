@@ -5,13 +5,13 @@ ABConfig Changelog
 1.0.7
 -----
 
-    * Added getting a list of environment variables;
+    * Added support for lists in environment variables.
 
 
 1.0.6
 -----
 
-    * Added Vault extras support;
+    * Added Vault extras support.
 
 
 1.0.5
