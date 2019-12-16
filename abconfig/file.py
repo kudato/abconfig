@@ -20,7 +20,11 @@ class Reader(Dict):
     def __init__(self, obj: Dict):
         self._path = obj.get('__file__')
         if self._path:
-            super().__init__(obj + self._read)
+            prefix = obj.get('__prefix__', None)
+            if prefix:
+                super().__init__(obj + self._read[prefix])
+            else:
+                super().__init__(obj + self._read)
         else:
             super().__init__(obj)
 
@@ -74,19 +78,19 @@ class Format(type):
     def __call__(cls, obj: Dict) -> Dict:
         path = obj.get('__file__')
         if path:
-            return obj.do(*cls._format(path))
+            return obj.do(*cls._format(path, cls.__formats__))
         else:
             return obj
+
+    @staticmethod
+    def _format(path, formats) -> tuple:
+        _, extension = splitext(path)
+        for format_ in formats:
+            for e in format_.__extensions__:
+                if e == extension[1:]:
+                    return (format_,)
+        return formats
 
 
 class File(metaclass=Format):
     __formats__ = (Json, Yaml, Toml, Ini)
-
-    @staticmethod
-    def _format(path) -> tuple:
-        _, extension = splitext(path)
-        for format_ in File.__formats__:
-            for e in format_.__extensions__:
-                if e == extension[1:]:
-                    return (format_,)
-        return File.__formats__
