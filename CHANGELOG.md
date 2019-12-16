@@ -2,6 +2,12 @@ ABConfig Changelog
 ==================
 
 
+1.0.7
+-----
+
+    * Added getting a list of environment variables;
+
+
 1.0.6
 -----
 
