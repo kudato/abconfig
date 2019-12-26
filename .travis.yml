@@ -1,9 +1,11 @@
-language: python
 dist: xenial
 matrix:
   include:
   - python: 3.6
   - python: 3.7
+  - python: 3.8
+    env: RELEASE=this
+
 install:
 - pip install -r requirements.txt
 - pip install coveralls
@@ -18,6 +20,6 @@ deploy:
     secure: iA1RvZctT+ZqfS52+PZ/PqWJQ02ZEPsRPlPesIkQWYvFK7mSCjOCgZJ1QXw0s4Eyx+a1HM5vynkfuJGwAbHa5Hvojwk5r57b1NyMxW1P2lcIvIY74l0kiMkq8TOtMq+qVvPwO9zonScZV/RfdJjLqB32aN989K1jLS/licl+/1To5WcXOUzVsTINNQHzy8FitvGYELFIEXNr5A4uwNWXE3gLbLepSSs8qzMUwAc9jp1r0f5G30ZWXKzaMIZsgwlAt2Jpa7LoR6y9uYKYZBV4f9gwgv5W/Rofach6fEv2rWulhVjsLZYcnzoEXwVBImzxyQpVik0++flRqPPEJQ7wLN5Ejo05WP6pUmEcBGd8GK5J/hMybm1RbrWQBBLFCYJE4fT8CZgRUdoNU0W3JkAlkESWIyUotezGDszFvL6IDC9s6p+tM1rJ0TQG8zwPv3GnRaxWo3cUXcpxtLtBhe/EDA23rwBQGAFKtgqiUhnpVJqOAeJjWF8/amHI2dDQ3UewNFM2EWfB4fgpH7LhlnoNecssHl086xNkNkmUL2kCb12Y01Efz07v7gAb3ITDi42rKrZ8YYQBMYUm+fJg5KYDCzhcWJXxewhn4T+Sn47vCd01aMc+fappKtrzV4M2ofQCstwsbEMvI24R6t62ttawgt0QYElwcNjW7FetPq36V9g=
   distributions: sdist bdist_wheel
   skip_existing: true
-branches:
-  only:
-  - master
+  on:
+    condition: $RELEASE = this
+    branch: master
