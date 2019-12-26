@@ -93,20 +93,3 @@ class Dict(Type, UserDict):
     @staticmethod
     def is_dict(obj: any) -> bool:
         return isinstance(obj, (dict, Dict, OrderedDict, UserDict))
-
-
-class GetAttrs(Dict):
-    def __init__(self, obj=None, settings=None):
-        if not settings: settings = []
-        super().__init__({
-            str(k): v for k,v in self.is_type(obj).__dict__.items()
-            if k[:1] != '_' or k in settings
-        })
-
-
-class Switch(type):
-    def __call__(cls, obj: Dict) -> Dict:
-        if cls.__target__.enabled(obj) is True:
-            return obj.bind(cls.__target__)
-        else:
-            return obj

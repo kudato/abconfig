@@ -1,6 +1,7 @@
 from os import environ
 
-from abconfig.common import Dict, Switch
+from abconfig.common import Dict
+from abconfig.utils import Switch
 
 
 class OSEnviron(Dict):
