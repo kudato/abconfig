@@ -2,6 +2,13 @@ ABConfig Changelog
 ==================
 
 
+1.0.8
+-----
+
+    * Added support AWS Auth Method for Vault.
+    * Some optimizations and refactoring.
+
+
 1.0.7
 -----
 
