@@ -54,7 +54,7 @@ class VaultData(OSEnviron):
 
         if token and auth == 'token':
             client.token = token
-        elif auth == 'iam':
+        elif auth == 'aws_iam':
             session = boto3.Session()
             creds = session.get_credentials()
             kwargs = [
