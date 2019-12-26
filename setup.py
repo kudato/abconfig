@@ -46,10 +46,9 @@ args = dict(
         'yaml': ['pyyaml>=5.1'],
         'toml': ['toml>=0.10.0'],
         'vault': ['hvac>=0.9.6, <0.11.2'],
-        'boto3': ['boto3>=1.10.45']
+        'aws': ['boto3>=1.10.45']
     },
-    python_requires='>=3.6.0',
-
+    python_requires='>=3.6.0'
 )
 
 setup(**args)
