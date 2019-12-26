@@ -2,7 +2,7 @@ import unittest
 
 from abconfig import GetAttrs
 from abconfig.common import Dict
-from abconfig.env import Env
+from abconfig.utils import Close
 
 test_data = dict(
     test1=1,
@@ -28,7 +28,7 @@ class TestGetAttrs(unittest.TestCase):
         self.assertEqual(GetAttrs(TestClass()),test_data)
 
 
-class TestEnv(unittest.TestCase):
+class TestClose(unittest.TestCase):
     def test_finalize(self):
         data = test_data
-        self.assertEqual(Env(Dict(data)), test_data)
+        self.assertEqual(Close(Dict(data)), test_data)
