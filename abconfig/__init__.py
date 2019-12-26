@@ -1,12 +1,13 @@
 __version__ = '1.0.8'
 
-from abconfig.common import Dict, GetAttrs
+from abconfig.common import Dict
 
 from abconfig.file import File
 from abconfig.env import Environment
 from abconfig.vault import Vault
 
-from abconfig.utils import Settings, HideSettings, Close
+from abconfig.utils import GetAttrs, Close
+from abconfig.settings import Settings, HideSettings
 
 
 class ABConfig(Dict, Settings):

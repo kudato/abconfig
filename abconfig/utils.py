@@ -4,34 +4,23 @@ from functools import wraps
 from abconfig.common import Dict
 
 
-class Settings:
-    __settings__ = (
-        '__prefix__',
-        '__hidesettings__',
-        '__file_required__',
-        '__file__',
-        '__env__',
-        '__vault__',
-    )
-
-    __hidesettings__ = True
-    __file_required__ = False
-    __file__ = False
-    __env__ = True
-    __prefix__ = None
-    __vault__ = False
+def ignore_warnings(f):
+    @wraps(f)
+    def inner(*args, **kwargs):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("ignore")
+            response = f(*args, **kwargs)
+        return response
+    return inner
 
 
-class HideSettings(Dict):
-    __exclude__ = ['__prefix__']
-
-    def __init__(self, obj: Dict):
-        if obj.get('__hidesettings__', True) is True:
-            for k,v in dict(obj).items():
-                if k in Settings.__settings__ and \
-                        not k in self.__exclude__ or not v:
-                    obj.pop(k)
-        super().__init__(obj)
+class GetAttrs(Dict):
+    def __init__(self, obj=None, settings=None):
+        if not settings: settings = []
+        super().__init__({
+            str(k): v for k,v in self.is_type(obj).__dict__.items()
+            if k[:1] != '_' or k in settings
+        })
 
 
 class Close(Dict):
@@ -48,11 +37,9 @@ class Close(Dict):
             return (k, None if isinstance(v, type) else v)
 
 
-def ignore_warnings(f):
-    @wraps(f)
-    def inner(*args, **kwargs):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("ignore")
-            response = f(*args, **kwargs)
-        return response
-    return inner
+class Switch(type):
+    def __call__(cls, obj: Dict) -> Dict:
+        if cls.__target__.enabled(obj) is True:
+            return obj.bind(cls.__target__)
+        else:
+            return obj
