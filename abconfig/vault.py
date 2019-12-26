@@ -9,9 +9,10 @@ try:
 except ImportError:
     pass
 
-from abconfig.common import Dict, Switch
+from abconfig.common import Dict
 from abconfig.env import OSEnviron
-from abconfig.utils import Close, ignore_warnings
+
+from abconfig.utils import Switch, Close, ignore_warnings
 
 
 class VaultData(OSEnviron):
@@ -46,7 +47,7 @@ class VaultData(OSEnviron):
 
     @property
     @ignore_warnings
-    def _auth(self) -> VaultClient:
+    def _auth(self):
         client = VaultClient(url=self._config['addr'])
         auth = self._config['auth_type']
         token = self._config['token']
