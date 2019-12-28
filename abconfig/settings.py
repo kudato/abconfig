@@ -10,7 +10,7 @@ class Settings:
     __env__ = True
     __prefix__ = None
     __vault__ = False
-
+    __vault_required__ = True
     __settings__ = (
         '__hidesettings__',
         '__hidesettings_exclude__',
@@ -18,7 +18,8 @@ class Settings:
         '__file_required__',
         '__env__',
         '__prefix__',
-        '__vault__'
+        '__vault__',
+        '__vault_required__'
     )
 
 

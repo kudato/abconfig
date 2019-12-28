@@ -1,5 +1,6 @@
 try:
     from hvac import Client as VaultClient
+    from hvac.exceptions import VaultError
     from hvac.exceptions import Unauthorized as VaultUnauthorized
 except ImportError:
     pass
@@ -28,8 +29,14 @@ class VaultData(OSEnviron):
     )
 
     def __init__(self, obj: Dict):
+        self._required = obj.get('__vault_required__', True)
         self._config = (self._config_scheme + obj.get('__vault__')).bind(Close)
-        self._cache = self._request
+        try:
+            self._cache = self._request()
+        except VaultError as error:
+            if self._required is True:
+                raise VaultError(error)
+            self._cache = {}
 
         if self._config['data_type'] == 'kv':
             super().__init__(obj + self.read(obj, obj.get('__prefix__')))
@@ -44,6 +51,18 @@ class VaultData(OSEnviron):
             return (key, self.read(v, self.concat(prefix,key)))
         else:
             return (key, self._cache.get(self.concat(prefix, key).upper(), None))
+
+    def _request(self) -> Dict:
+        if self._config['kv_version'] == 2:
+            return Dict(self._auth.v2.read_secret_version(
+                path=self._config['path']
+            )['data']['data'])
+        elif self._config['kv_version'] == 1:
+            return Dict(self._auth.v1.read_secret(
+                path=self._config['path']
+            )['data'])
+        else:
+            return Dict()
 
     @property
     @ignore_warnings
@@ -73,22 +92,9 @@ class VaultData(OSEnviron):
             )
 
         if client.is_authenticated() is False:
-            raise VaultUnauthorized(f'auth_type: {auth}, kwargs: {kwargs}')
+            raise VaultUnauthorized(f'auth_type: {auth}')
 
         return client.secrets.kv
-
-    @property
-    def _request(self) -> Dict:
-        if self._config['kv_version'] == 2:
-            return Dict(self._auth.v2.read_secret_version(
-                path=self._config['path']
-            )['data']['data'])
-        elif self._config['kv_version'] == 1:
-            return Dict(self._auth.v1.read_secret(
-                path=self._config['path']
-            )['data'])
-        else:
-            return Dict()
 
     @staticmethod
     def enabled(obj: Dict):
