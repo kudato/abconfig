@@ -2,6 +2,19 @@ ABConfig Changelog
 ==================
 
 
+1.0.10
+-----
+
+    * Add vault_required parameter.
+
+
+1.0.9
+-----
+
+    * Rename aws auth_type to aws_iam;
+    * Add dedicated settings module.
+
+
 1.0.9
 -----
 
