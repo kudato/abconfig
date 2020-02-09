@@ -1,10 +1,11 @@
 import os
 import json
 import yaml
+import toml
 import unittest
 
 from unittest.mock import mock_open, patch
-from abconfig.file import Json, Yaml
+from abconfig.file import Json, Yaml, Toml
 from abconfig.common import Dict
 
 
@@ -34,6 +35,11 @@ class TestFile(unittest.TestCase):
     @patch('builtins.open', new_callable=mock_open, read_data=yaml.dump(data))
     def test_yaml(self, m):
         self.assertEqual(Dict(source).bind(Yaml), data)
+        m.assert_called_with('test_file', 'r')
+
+    @patch('builtins.open', new_callable=mock_open, read_data=toml.dumps(data))
+    def test_toml(self, m):
+        self.assertEqual(Dict(source).bind(Toml), data)
         m.assert_called_with('test_file', 'r')
 
     @patch('builtins.open', new_callable=mock_open, read_data='wrong')

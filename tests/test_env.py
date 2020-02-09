@@ -23,3 +23,8 @@ class TestEnv(unittest.TestCase):
         self.assertEqual(
             Dict(foo=1, __env__=False).bind(Environment), {'foo': 1, '__env__': False}
         )
+
+    def test_list_value(self):
+        with unittest.mock.patch.dict(os.environ, {'FOO': '1,2,3,4,5'}):
+            self.assertEqual(
+                Dict(foo=[int], __env__=True).bind(Environment), {'foo': [1,2,3,4,5], '__env__': True})
