@@ -6,7 +6,6 @@ from abconfig.utils import Switch
 
 class OSEnviron(Dict):
     def __init__(self, obj: Dict):
-        self.__list_separator__ = ','
         super().__init__(obj + self.read(obj, obj.get('__prefix__', None)))
 
     def read(self, obj: Dict, prefix: str) -> Dict:
@@ -19,7 +18,7 @@ class OSEnviron(Dict):
         var = environ.get(self.concat(prefix, k).upper(), None)
         if not var: return (k,v)
         if self.is_list(v):
-            return (k, self.is_type(v)(var.split(self.__list_separator__)))
+            return (k, self.is_type(v)(var.split(',')))
         else:
             return (k, self.is_type(v)(var))
 

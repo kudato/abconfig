@@ -63,6 +63,7 @@ class Dict(Type, UserDict):
     """
 
     __mempty__ = dict()
+    __supported_classes__ = (dict, OrderedDict, UserDict)
 
     def fmap(self, f: type) -> dict:
         """ Applies function to each pair of key values ​​in dict. """
@@ -92,4 +93,4 @@ class Dict(Type, UserDict):
 
     @staticmethod
     def is_dict(obj: any) -> bool:
-        return isinstance(obj, (dict, Dict, OrderedDict, UserDict))
+        return isinstance(obj, Dict.__supported_classes__ + (Dict,))
