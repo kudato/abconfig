@@ -1,6 +1,11 @@
 ABConfig Changelog
 ==================
 
+1.0.11
+-----
+
+    * Separator for lists passed through environment variables is always a comma.
+
 
 1.0.10
 -----
