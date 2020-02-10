@@ -18,6 +18,7 @@ from abconfig.common import Dict
 
 class Reader(Dict):
     def __init__(self, obj: Dict):
+        self._fail = False
         self._path = obj.get('__file__')
         if self._path:
             prefix = obj.get('__prefix__', None)
@@ -37,6 +38,7 @@ class Reader(Dict):
                     raise IOError
                 return result
         except Exception:
+            self._fail = True
             return self.__mempty__
 
     def _driver(self, fd) -> dict:
@@ -76,20 +78,29 @@ class Ini(Reader):
 
 class Format(type):
     def __call__(cls, obj: Dict) -> Dict:
-        path = obj.get('__file__')
-        if path:
-            return obj.do(*cls._format(path, cls.__formats__))
+        enabled = obj.get('__file__', None)
+        if enabled:
+            return cls._format(obj, enabled, cls.__formats__)
         else:
             return obj
 
     @staticmethod
-    def _format(path, formats) -> tuple:
+    def _format(obj: Dict, path: str, formats: tuple) -> tuple:
         _, extension = splitext(path)
         for format_ in formats:
             for e in format_.__extensions__:
                 if e == extension[1:]:
-                    return (format_,)
-        return formats
+                    return obj.bind(format_)
+
+        for format_ in formats:
+            new = obj.bind(format_)
+            if new._fail is False:
+                return new
+
+        if obj.get('__file_required__') is True:
+            raise FileNotFoundError
+
+        return obj
 
 
 class File(metaclass=Format):
