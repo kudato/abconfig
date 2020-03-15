@@ -1,0 +1,38 @@
+docs_dir: docs
+
+site_name: ABConfig
+repo_url: https://github.com/kudato/abconfig
+site_description: "Config manager for Python3"
+site_author: Alexander Shevchenko
+copyright: 'Copyright &copy; 2020 Alexander Shevchenko'
+
+theme:
+  name: 'material'
+  logo: logo.svg
+  palette:
+    primary: 'white'
+    accent: 'deep purple'
+  font:
+    text: 'Source Sans Pro'
+    code: 'Fira Mono'
+
+extra:
+  include_toc: yes
+  sidebars:
+    - about
+    - navigation
+    - related
+    - search
+
+nav:
+- Usage: 'usage.md'
+- Environment: 'env.md'
+- File: 'file.md'
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - codehilite:
+      linenums: true
+plugins:
+  - search
