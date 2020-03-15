@@ -1,6 +1,12 @@
 ABConfig Changelog
 ==================
 
+1.0.12
+-----
+
+    * Fix load lists from env.
+
+
 1.0.11
 -----
 
