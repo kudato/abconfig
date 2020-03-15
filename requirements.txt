@@ -2,3 +2,5 @@ pyyaml>=5.1
 toml>=0.10.0
 hvac>=0.9.6, <0.11.2
 boto3>=1.10.45
+#4docs
+material
