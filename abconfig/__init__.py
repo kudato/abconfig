@@ -1,4 +1,4 @@
-__version__ = '1.0.11'
+__version__ = '1.0.12'
 
 from abconfig.common import Dict
 
@@ -17,6 +17,7 @@ class ABConfig(Dict, Settings):
         super().__init__(
             GetAttrs(
                 obj if obj else self,
+                True if obj else False,
                 settings=self.__settings__
             )
             .do(*self.__pipeline__)

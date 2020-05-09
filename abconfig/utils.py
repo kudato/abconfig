@@ -15,9 +15,9 @@ def ignore_warnings(f):
 
 
 class GetAttrs(Dict):
-    def __init__(self, obj=None, settings=None):
+    def __init__(self, obj=None, pass_=None, settings=None):
         if not settings: settings = []
-        super().__init__({
+        super().__init__(obj if pass_ is True else {
             str(k): v for k,v in self.is_type(obj).__dict__.items()
             if k[:1] != '_' or k in settings
         })
